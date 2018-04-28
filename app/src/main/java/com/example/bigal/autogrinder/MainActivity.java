@@ -1,15 +1,15 @@
 package com.example.bigal.autogrinder;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.MotionEvent;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
@@ -23,20 +23,34 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         final TextView textView = (TextView) findViewById(R.id.text_view);
+        final TextView textView2 = (TextView) findViewById(R.id.text_view2);
         recordActions = new RecordActions(textView);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.only_button);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                if(recordActions.isRecording()) {
-                    recordActions.stopRecording();
-                }
-                else {
-                    recordActions.startRecording();
-                }
+            public void onClick(View view) {recordActions.toggleRecording();
             }
         });
+
+        FloatingActionButton xButton = (FloatingActionButton) findViewById(R.id.x_button);
+        xButton.setOnClickListener(new MyOnClickListener(textView2));
+    }
+
+    private class MyOnClickListener implements View.OnClickListener {
+
+        private int count = 1;
+        private TextView textView;
+
+        MyOnClickListener(TextView textView) {
+            this.textView = textView;
+        }
+
+        @Override
+        public void onClick(View v) {
+            textView.setText(""+count);
+            count++;
+        }
     }
 
     @Override
@@ -62,9 +76,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent event) {
+    public boolean dispatchTouchEvent(MotionEvent event) {
         recordActions.handleAction(event);
-
-        return super.onTouchEvent(event);
+        return super.dispatchTouchEvent(event);
     }
 }
